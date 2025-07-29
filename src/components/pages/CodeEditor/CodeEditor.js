@@ -6,7 +6,7 @@ import SendIcon from "@mui/icons-material/Send";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
-import BackArrowIcon from '@mui/icons-material/KeyboardBackspaceRounded';
+import BackArrowIcon from "@mui/icons-material/KeyboardBackspaceRounded";
 import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/theme-terminal";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -16,6 +16,7 @@ import { JOB_STATUS } from "../../constant/CodeEditor";
 import moment from "moment";
 import Header from "./Header";
 import { toast } from "react-toastify";
+import { LANG_SUPPORT } from "./constant";
 
 const POLLING_INTERVAL = 1000;
 const resetJobInfo = () => {
@@ -26,8 +27,14 @@ const resetJobInfo = () => {
   };
 };
 
-const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) => {
+const CodeEditor = ({
+  editorData,
+  testData,
+  setTestData,
+  toggleEditorStatus,
+}) => {
   const [code, setCode] = useState();
+  const [selectedLang, setSelectedLang] = useState("js");
   const [jobInfo, setJobInfo] = useState(resetJobInfo());
   const timerRef = useRef();
 
@@ -37,7 +44,7 @@ const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) =
 
   const runCode = () => {
     const payload = {
-      lang: "py",
+      lang: selectedLang,
       code: code,
     };
     if (!code && code?.length === 0) return;
@@ -81,16 +88,13 @@ const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) =
     clearInterval(timerRef.current);
   };
 
-
-
-  useEffect(()=>{
-    if(code)
-    {
-      const copyTestData = {...testData};
-      copyTestData.interview.questions[editorData.index || 0].response = code; 
+  useEffect(() => {
+    if (code) {
+      const copyTestData = { ...testData };
+      copyTestData.interview.questions[editorData.index || 0].response = code;
       setTestData(copyTestData);
     }
-  },[code])
+  }, [code]);
 
   useEffect(() => {
     if (
@@ -110,9 +114,9 @@ const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) =
     return () => clearInterval(timerRef?.current);
   }, [jobInfo]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setCode(testData.interview.questions[editorData.index || 0].response || "");
-  },[])
+  }, []);
 
   const renderStatus = () => {
     const getCss = () => {
@@ -185,11 +189,13 @@ const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) =
   };
 
   const sideBar = () => {
-    return <Box className="side-bar-container">
-              <Box onClick={toggleEditorStatus} className="back-box">
-                <BackArrowIcon className="back-icon"/>
-              </Box>
-    </Box>;
+    return (
+      <Box className="side-bar-container">
+        <Box onClick={toggleEditorStatus} className="back-box">
+          <BackArrowIcon className="back-icon" />
+        </Box>
+      </Box>
+    );
   };
   const questionBox = () => {
     return (
@@ -206,14 +212,27 @@ const CodeEditor = ({ editorData, testData, setTestData, toggleEditorStatus }) =
   const renderOutputBox = () => {
     return <Box className="output-box-container">{renderStatus()}</Box>;
   };
+
+  const handleLangSelect = (e) => {
+    setSelectedLang(e.target.value);
+    // setSelectedLang
+  };
   const codeBox = () => {
     return (
       <Box className="code-box-container">
         <Box className="menu-bar">
           <Box>
-            <select className="select-main" value="python">
+            <select
+              onChange={handleLangSelect}
+              className="select-main"
+              value={selectedLang}
+            >
               <option value="">Select Language</option>
-              <option value="python">python</option>
+              {LANG_SUPPORT.map((lang) => (
+                <option key={lang.payload} value={lang.payload}>
+                  {lang.name}
+                </option>
+              ))}
             </select>
           </Box>
           <Box>
