@@ -20,11 +20,11 @@ const LIMIT = 10;
 const { ADD_INTERVIEWS } = HEADERS;
 const AddInterview = () => {
   const [formData, setFormData] = useState();
-  const [clientData,setClientData] = useState();
-  const [isSuperAdmin,setSuperIsAdmin] = useState(false);
-  const [questionBankModal,setQuestionBankModal] = useState({
-      status: false,
-      data: null,
+  const [clientData, setClientData] = useState();
+  const [isSuperAdmin, setSuperIsAdmin] = useState(false);
+  const [questionBankModal, setQuestionBankModal] = useState({
+    status: false,
+    data: null,
   });
   const [questionData, setQuestionData] = useState({
     data: null,
@@ -32,7 +32,7 @@ const AddInterview = () => {
     currentLimit: LIMIT,
     total: 0,
   });
-  const [selectedQuestion,setSelectedQuestion] = useState([]);
+  const [selectedQuestion, setSelectedQuestion] = useState([]);
   const navigate = useNavigate();
   const handleInputChage = (name, e) => {
     const { value } = e?.target;
@@ -59,22 +59,25 @@ const AddInterview = () => {
       interviewerEmail: formData?.interviewerEmail || null,
       interviewerPhone: formData?.interviewerPhone || null,
       date: moment(formData?.date).unix() || null,
-      questions:selectedQuestion,
+      questions: selectedQuestion,
     };
     addInterviewAPI(payload)
       .then((res) => {
         const data = res?.data;
-        toast.success(data?.message,{
-          position: "top-right"
-      })
-      navigate("/interviews",{
-        replace: true,
-      });
-      })
-      .catch((error) => {
-        toast.error(error?.data?.message || error?.toString(), {
+        toast.success(data?.message, {
           position: "top-right",
         });
+        navigate("/interviews", {
+          replace: true,
+        });
+      })
+      .catch((error) => {
+        toast.error(
+          error?.message || error?.data?.message || error?.toString(),
+          {
+            position: "top-right",
+          }
+        );
       });
   };
 
@@ -119,61 +122,61 @@ const AddInterview = () => {
   };
 
   const openQuestionBank = () => {
-    setQuestionBankModal(prev=>({...prev,status: true}));
-  }
+    setQuestionBankModal((prev) => ({ ...prev, status: true }));
+  };
 
   const closeQuestionBank = () => {
-    setQuestionBankModal(prev=>({...prev,status: false}));
-  }
+    setQuestionBankModal((prev) => ({ ...prev, status: false }));
+  };
 
-  useEffect(()=>{
-    if(questionBankModal.status === false)
-    {
+  useEffect(() => {
+    if (questionBankModal.status === false) {
       let arr = [];
-      questionData?.data?.map(item=>{
-          if(item.isSelected)
-          {
-            arr.push(item);
-          }
-      })
+      questionData?.data?.map((item) => {
+        if (item.isSelected) {
+          arr.push(item);
+        }
+      });
       setSelectedQuestion(arr);
-
     }
-  },[questionBankModal])
+  }, [questionBankModal]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const tempClientDetails = JSON.parse(localStorage.getItem("clientData"));
     const isAdmin = tempClientDetails?.role === "SUPERADMIN";
     setSuperIsAdmin(isAdmin);
-    if(isAdmin)
-        getAllClients();
-    
-    getAllQuestions();  
-  },[])
+    if (isAdmin) getAllClients();
+
+    getAllQuestions();
+  }, []);
   return (
     <Box className="add-interview-main-container">
       <Navbar />
       <TopHeader header={ADD_INTERVIEWS} />
       <Box className="wrapper">
-        {
-          isSuperAdmin ? 
+        {isSuperAdmin ? (
           <Box className="form-container">
-              <Typography className="heading">Client Details</Typography>
-              <Box className="form-input">
-                <Typography className="label">Client</Typography>
-                <Select size="small" placeholder="select client" onChange={(e)=>handleInputChage("companyID",e)} className="select">
-                    {
-                      clientData?.data && clientData?.data?.map(client=>{
-                            return (
-                                <MenuItem value={client?.companyID?._id}>{client?.companyID?.name}</MenuItem>
-                            )
-                        })
-                    }
-                </Select>
-              </Box>
-          </Box>    
-          :null
-        }
+            <Typography className="heading">Client Details</Typography>
+            <Box className="form-input">
+              <Typography className="label">Client</Typography>
+              <Select
+                size="small"
+                placeholder="select client"
+                onChange={(e) => handleInputChage("companyID", e)}
+                className="select"
+              >
+                {clientData?.data &&
+                  clientData?.data?.map((client) => {
+                    return (
+                      <MenuItem value={client?.companyID?._id}>
+                        {client?.companyID?.name}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+            </Box>
+          </Box>
+        ) : null}
 
         <Box className="form-container">
           <Typography className="heading">Candidate Details</Typography>
@@ -236,25 +239,29 @@ const AddInterview = () => {
           <Box className="form-input">
             <Typography className="label">Question</Typography>
             <Box className="question-container">
-            {
-              selectedQuestion?.map((question,index)=>{
-                return <Box className="question-box">
-                  <Typography className="question-title">{index+1}.</Typography>
-                  <Typography className="question-title">{question?.title}</Typography>
+              {selectedQuestion?.map((question, index) => {
+                return (
+                  <Box className="question-box">
+                    <Typography className="question-title">
+                      {index + 1}.
+                    </Typography>
+                    <Typography className="question-title">
+                      {question?.title}
+                    </Typography>
                   </Box>
-              })
-            }
-          </Box> 
+                );
+              })}
+            </Box>
             <Button className="ques-bank-btn" onClick={openQuestionBank}>
               Question Bank
             </Button>
           </Box>
           <QuestionBankModal
-          questionBankModal={questionBankModal}
-          closeQuestionBank={closeQuestionBank}
-          questionData={questionData}
-          setQuestionData={setQuestionData}
-          LIMIT={LIMIT}
+            questionBankModal={questionBankModal}
+            closeQuestionBank={closeQuestionBank}
+            questionData={questionData}
+            setQuestionData={setQuestionData}
+            LIMIT={LIMIT}
           />
           <Box className="form-input">
             <Typography className="label">Date</Typography>
@@ -266,7 +273,6 @@ const AddInterview = () => {
               dateFormat="d MMMM, yyyy h:mm aa"
             />
           </Box>
-          
         </Box>
 
         <Box className="form-container">

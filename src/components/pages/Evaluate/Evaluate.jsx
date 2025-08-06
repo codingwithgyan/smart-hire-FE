@@ -25,9 +25,12 @@ const Evaluate = () => {
         setTestData(data);
       })
       .catch((error) => {
-        toast.error(error?.data?.message || error?.toString(), {
-          position: "top-right",
-        });
+        toast.error(
+          error?.message || error?.data?.message || error?.toString(),
+          {
+            position: "top-right",
+          }
+        );
       });
   };
 

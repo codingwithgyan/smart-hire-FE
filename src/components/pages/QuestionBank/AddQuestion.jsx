@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import moment from "moment";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { addQuestionAPI } from "../../../services/question";
 import { getAllClientsAPI } from "../../../services/client";
 import { useNavigate } from "react-router-dom";
@@ -18,66 +18,80 @@ import { useNavigate } from "react-router-dom";
 const { ADD_QUESTION } = HEADERS;
 const AddQuestion = () => {
   const [formData, setFormData] = useState();
-  const [testCases,setTestCases] = useState([{
-    input: "",
-    output: "",
-  }]);
-  const [isSuperAdmin,setSuperIsAdmin] = useState(false);
-  const [clientData,setClientData] = useState();
+  const [testCases, setTestCases] = useState([
+    {
+      input: "",
+      output: "",
+    },
+  ]);
+  const [isSuperAdmin, setSuperIsAdmin] = useState(false);
+  const [clientData, setClientData] = useState();
   const navigate = useNavigate();
   const handleInputChage = (name, e) => {
     const { value } = e?.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  console.log("==========================",formData)
-  console.log("==========================testCases",testCases);
-
+  console.log("==========================", formData);
+  console.log("==========================testCases", testCases);
 
   const handleSubmit = () => {
     const clientData = JSON.parse(localStorage.getItem("clientData"));
     const companyID = clientData?.companyID;
-    const { title, description, images, solution, code, type, topic, link, testCases } = formData;
+    const {
+      title,
+      description,
+      images,
+      solution,
+      code,
+      type,
+      topic,
+      link,
+      testCases,
+    } = formData;
 
     const payload = {
-        companyID: companyID || formData?.companyID || null,
-        title: title || null,
-        description: description || null,
-        images: images || [],
-        solution: solution || null,
-        code: code || null,
-        type: type || "PUBLIC",
-        topic: topic || null,
-        link: link || null,
-        testCases: testCases || null,
+      companyID: companyID || formData?.companyID || null,
+      title: title || null,
+      description: description || null,
+      images: images || [],
+      solution: solution || null,
+      code: code || null,
+      type: type || "PUBLIC",
+      topic: topic || null,
+      link: link || null,
+      testCases: testCases || null,
     };
     addQuestionAPI(payload)
       .then((res) => {
         const data = res?.data;
-        toast.success(data?.message,{
-          position: "top-right"
-        })
-        navigate("/questions",{
+        toast.success(data?.message, {
+          position: "top-right",
+        });
+        navigate("/questions", {
           replace: true,
         });
       })
       .catch((error) => {
-        toast.error(error?.data?.message || error?.toString(), {
-          position: "top-right",
-        });
+        toast.error(
+          error?.message || error?.data?.message || error?.toString(),
+          {
+            position: "top-right",
+          }
+        );
       });
   };
 
   const handleAddTestCase = () => {
-    setTestCases(prev=>([...prev,{input:"",output:""}]));
-  }
+    setTestCases((prev) => [...prev, { input: "", output: "" }]);
+  };
 
-  const handleTestCaseChange = (index,name,e) => {
-    const {value} = e?.target;
+  const handleTestCaseChange = (index, name, e) => {
+    const { value } = e?.target;
     const copyTestCase = [...testCases];
     copyTestCase[index][name] = value;
-    setTestCases(copyTestCase); 
-  }
- 
+    setTestCases(copyTestCase);
+  };
+
   const getAllClients = () => {
     getAllClientsAPI()
       .then((res) => {
@@ -98,38 +112,41 @@ const AddQuestion = () => {
       });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const tempClientDetails = JSON.parse(localStorage.getItem("clientData"));
     const isAdmin = tempClientDetails?.role === "SUPERADMIN";
     setSuperIsAdmin(isAdmin);
-    if(isAdmin)
-        getAllClients();
-  },[])
+    if (isAdmin) getAllClients();
+  }, []);
 
   return (
     <Box className="add-question-main-container">
       <Navbar />
       <TopHeader header={ADD_QUESTION} />
       <Box className="wrapper">
-        {
-          isSuperAdmin ? 
+        {isSuperAdmin ? (
           <Box className="form-container">
-              <Typography className="heading">Client Details</Typography>
-              <Box className="form-input">
-                <Typography className="label">Client</Typography>
-                <Select size="small" placeholder="select client" onChange={(e)=>handleInputChage("companyID",e)} className="select">
-                    {
-                      clientData?.data && clientData?.data?.map(client=>{
-                            return (
-                                <MenuItem value={client?.companyID?._id}>{client?.companyID?.name}</MenuItem>
-                            )
-                        })
-                    }
-                </Select>
-              </Box>
-          </Box>    
-          :null
-        }
+            <Typography className="heading">Client Details</Typography>
+            <Box className="form-input">
+              <Typography className="label">Client</Typography>
+              <Select
+                size="small"
+                placeholder="select client"
+                onChange={(e) => handleInputChage("companyID", e)}
+                className="select"
+              >
+                {clientData?.data &&
+                  clientData?.data?.map((client) => {
+                    return (
+                      <MenuItem value={client?.companyID?._id}>
+                        {client?.companyID?.name}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+            </Box>
+          </Box>
+        ) : null}
         <Box className="form-container">
           <Typography className="heading">Question Details</Typography>
           <Box className="form-input">
@@ -142,30 +159,38 @@ const AddQuestion = () => {
           </Box>
           <Box className="form-input">
             <Typography className="label">Description</Typography>
-            <textarea 
-            className="input textarea" 
-            rows="4"
-            onChange={(e) => handleInputChage("description", e)}></textarea>
+            <textarea
+              className="input textarea"
+              rows="4"
+              onChange={(e) => handleInputChage("description", e)}
+            ></textarea>
           </Box>
           <Box className="form-input">
             <Typography className="label">Solution</Typography>
-            <textarea 
-            className="input textarea" 
-            rows="4"
-            onChange={(e) => handleInputChage("solution", e)}></textarea>
+            <textarea
+              className="input textarea"
+              rows="4"
+              onChange={(e) => handleInputChage("solution", e)}
+            ></textarea>
           </Box>
           <Box className="form-input">
             <Typography className="label">Code</Typography>
-            <textarea 
-            className="input textarea code" 
-            rows="4"
-            onChange={(e) => handleInputChage("code", e)}></textarea>
+            <textarea
+              className="input textarea code"
+              rows="4"
+              onChange={(e) => handleInputChage("code", e)}
+            ></textarea>
           </Box>
           <Box className="form-input">
             <Typography className="label">Type</Typography>
-            <Select size="small" onChange={(e)=>handleInputChage("type",e)} className="select" value={formData?.type || "PUBLIC"}>
-                <MenuItem value="PUBLIC">Public</MenuItem>
-                <MenuItem value="PRIVATE">Private</MenuItem>
+            <Select
+              size="small"
+              onChange={(e) => handleInputChage("type", e)}
+              className="select"
+              value={formData?.type || "PUBLIC"}
+            >
+              <MenuItem value="PUBLIC">Public</MenuItem>
+              <MenuItem value="PRIVATE">Private</MenuItem>
             </Select>
           </Box>
           <Box className="form-input">
@@ -189,44 +214,44 @@ const AddQuestion = () => {
         <Box className="form-container">
           <Typography className="heading">Test Cases</Typography>
           <Box display="flex" flexDirection="column" gap="22px">
-          {
-            testCases?.map((item, index)=>{
-                return (
-                    <Box display="flex" flexDirection="column" gap="4px">
-                        {
-                            index === 0 ? 
-                            <Box display="flex" justifyContent="flex-end">
-                                <Button onClick={handleAddTestCase} className="add-btn"><AddIcon className="icon"/></Button>
-                            </Box>
-                            : null
-                        }
-                        <Typography className="sub-text">Test {index+1}</Typography>
-                    <Box display="flex" flexDirection="column" gap="4px">
-                        <Box className="form-input">
-                            <Typography className="label">Input</Typography>
-                            <input
-                            className="input"
-                            onChange={(e) => handleTestCaseChange(index,"input", e)}
-                            type="text"
-                            />
-                        </Box>
-                        <Box className="form-input">
-                            <Typography className="label">Output</Typography>
-                            <input
-                            className="input"
-                            onChange={(e) => handleTestCaseChange(index,"output", e)}
-                            type="text"
-                            />
-                        </Box>
+            {testCases?.map((item, index) => {
+              return (
+                <Box display="flex" flexDirection="column" gap="4px">
+                  {index === 0 ? (
+                    <Box display="flex" justifyContent="flex-end">
+                      <Button onClick={handleAddTestCase} className="add-btn">
+                        <AddIcon className="icon" />
+                      </Button>
                     </Box>
-                   </Box> 
-                )
-            })
-          }
-
+                  ) : null}
+                  <Typography className="sub-text">Test {index + 1}</Typography>
+                  <Box display="flex" flexDirection="column" gap="4px">
+                    <Box className="form-input">
+                      <Typography className="label">Input</Typography>
+                      <input
+                        className="input"
+                        onChange={(e) =>
+                          handleTestCaseChange(index, "input", e)
+                        }
+                        type="text"
+                      />
+                    </Box>
+                    <Box className="form-input">
+                      <Typography className="label">Output</Typography>
+                      <input
+                        className="input"
+                        onChange={(e) =>
+                          handleTestCaseChange(index, "output", e)
+                        }
+                        type="text"
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
-         
-        </Box>  
 
         <Box className="form-container">
           <Box display="flex" justifyContent="flex-end">

@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import moment from "moment";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import { addQuestionAPI } from "../../../services/question";
 import { addClientAPI, getAllClientsAPI } from "../../../services/client";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +18,8 @@ import { useNavigate } from "react-router-dom";
 const { ADD_CLIENT } = HEADERS;
 const AddClient = () => {
   const [formData, setFormData] = useState();
-  const [isSuperAdmin,setSuperIsAdmin] = useState(false);
-  const [clientData,setClientData] = useState();
+  const [isSuperAdmin, setSuperIsAdmin] = useState(false);
+  const [clientData, setClientData] = useState();
   const navigate = useNavigate();
   const handleInputChage = (name, e) => {
     const { value } = e?.target;
@@ -31,32 +31,44 @@ const AddClient = () => {
   };
 
   const handleSubmit = () => {
-    const { companyName, companyEmail, companyPhone, companyLogo, companyExtra, 
-            userName, userEmail, userPhone, userPassword } = formData;
+    const {
+      companyName,
+      companyEmail,
+      companyPhone,
+      companyLogo,
+      companyExtra,
+      userName,
+      userEmail,
+      userPhone,
+      userPassword,
+    } = formData;
 
     const payload = {
-        companyName: companyName || null,
-        companyEmail: companyEmail || null,
-        companyPhone: companyPhone || null,
-        companyLogo: companyLogo || null,
-        companyExtra: companyExtra || null,
-        userName: userName || null,
-        userEmail: userEmail || null,
-        userPhone: userPhone || null,
-        userPassword: userPassword || null,
+      companyName: companyName || null,
+      companyEmail: companyEmail || null,
+      companyPhone: companyPhone || null,
+      companyLogo: companyLogo || null,
+      companyExtra: companyExtra || null,
+      userName: userName || null,
+      userEmail: userEmail || null,
+      userPhone: userPhone || null,
+      userPassword: userPassword || null,
     };
     addClientAPI(payload)
       .then((res) => {
         const data = res?.data;
-        toast.success(data?.message,{
-            position: "top-right"
-        })
-        navigate("/clients")
-      })
-      .catch((error) => {
-        toast.error(error?.data?.message || error?.toString(), {
+        toast.success(data?.message, {
           position: "top-right",
         });
+        navigate("/clients");
+      })
+      .catch((error) => {
+        toast.error(
+          error?.message || error?.data?.message || error?.toString(),
+          {
+            position: "top-right",
+          }
+        );
       });
   };
 
@@ -65,7 +77,7 @@ const AddClient = () => {
       <Navbar />
       <TopHeader header={ADD_CLIENT} />
       <Box className="wrapper">
-      <Box className="form-container">
+        <Box className="form-container">
           <Typography className="heading">Company Details</Typography>
           <Box className="form-input">
             <Typography className="label">Name</Typography>
@@ -91,7 +103,7 @@ const AddClient = () => {
               country={"in"}
             />
           </Box>
-      </Box>    
+        </Box>
         <Box className="form-container">
           <Typography className="heading">User Details</Typography>
           <Box className="form-input">
@@ -110,8 +122,7 @@ const AddClient = () => {
               type="text"
             />
           </Box>
-         
-        
+
           <Box className="form-input">
             <Typography className="label">Phone</Typography>
             <PhoneInput
@@ -128,7 +139,7 @@ const AddClient = () => {
               type="password"
             />
           </Box>
-        </Box>  
+        </Box>
 
         <Box className="form-container">
           <Box display="flex" justifyContent="flex-end">

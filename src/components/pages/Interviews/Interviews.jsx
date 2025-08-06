@@ -42,7 +42,10 @@ const InterviewsList = () => {
       })
       .catch((error) => {
         toast.error(
-          error?.data?.message || error?.data?.toString() || error?.toString(),
+          error?.message ||
+            error?.data?.message ||
+            error?.data?.toString() ||
+            error?.toString(),
           {
             position: "top-right",
           }
@@ -67,7 +70,10 @@ const InterviewsList = () => {
       })
       .catch((error) => {
         toast.error(
-          error?.data?.message || error?.data?.toString() || error?.toString(),
+          error?.message ||
+            error?.data?.message ||
+            error?.data?.toString() ||
+            error?.toString(),
           {
             position: "top-right",
           }

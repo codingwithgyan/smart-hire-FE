@@ -34,7 +34,10 @@ const QuestionBankList = () => {
       })
       .catch((error) => {
         toast.error(
-          error?.data?.message || error?.data?.toString() || error?.toString(),
+          error?.message ||
+            error?.data?.message ||
+            error?.data?.toString() ||
+            error?.toString(),
           {
             position: "top-right",
           }
@@ -51,7 +54,10 @@ const QuestionBankList = () => {
       <TopHeader header={QUESTION_BANK} />
       <Box className="wrapper">
         <Box display="flex" justifyContent="flex-end">
-          <Button onClick={()=>navigate('/question-bank/add')} className="add-ques-btn">
+          <Button
+            onClick={() => navigate("/question-bank/add")}
+            className="add-ques-btn"
+          >
             <AddIcon /> &nbsp;Add Question
           </Button>
         </Box>

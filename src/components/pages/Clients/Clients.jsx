@@ -32,7 +32,10 @@ const ClientList = () => {
       })
       .catch((error) => {
         toast.error(
-          error?.data?.message || error?.data?.toString() || error?.toString(),
+          error?.message ||
+            error?.data?.message ||
+            error?.data?.toString() ||
+            error?.toString(),
           {
             position: "top-right",
           }
@@ -49,7 +52,10 @@ const ClientList = () => {
       <TopHeader header={CLIENTS} />
       <Box className="wrapper">
         <Box display="flex" justifyContent="flex-end">
-          <Button onClick={()=>navigate('/clients/add')} className="add-client-btn">
+          <Button
+            onClick={() => navigate("/clients/add")}
+            className="add-client-btn"
+          >
             <AddIcon /> &nbsp;Add Client
           </Button>
         </Box>
